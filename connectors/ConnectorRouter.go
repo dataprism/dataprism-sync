@@ -3,7 +3,7 @@ package connectors
 import (
 	"net/http"
 	"github.com/gorilla/mux"
-	"github.com/dataprism/dataprism-lib/utils"
+	"github.com/dataprism/dataprism-commons/utils"
 	"io/ioutil"
 	"encoding/json"
 )

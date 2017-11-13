@@ -3,7 +3,7 @@ package links
 import (
 	"context"
 	"encoding/json"
-	"github.com/dataprism/dataprism-lib/consul"
+	"github.com/dataprism/dataprism-commons/consul"
 )
 
 type LinkManager struct {

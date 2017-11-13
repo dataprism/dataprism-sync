@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/dataprism/dataprism-lib/api"
+	"github.com/dataprism/dataprism-commons/api"
 	//"github.com/dataprism/dataprism-logics/logics"
 	consul "github.com/hashicorp/consul/api"
 	//nomad "github.com/hashicorp/nomad/api"
@@ -11,13 +11,13 @@ import (
 	//"github.com/dataprism/dataprism-lib/nodes"
 	"strconv"
 	"github.com/dataprism/dataprism-sync/connectors"
-	consul2 "github.com/dataprism/dataprism-lib/consul"
+	consul2 "github.com/dataprism/dataprism-commons/consul"
 	"github.com/dataprism/dataprism-sync/links"
 )
 
 func main() {
 	//var jobsDir = flag.String("d", "/tmp", "the directory where job information will be stored")
-	var port = flag.Int("p", 6300, "the port of the dataprism logics rest api")
+	var port = flag.Int("p", 6400, "the port of the dataprism logics rest api")
 
 	API := api.CreateAPI("0.0.0.0:" + strconv.Itoa(*port))
 
