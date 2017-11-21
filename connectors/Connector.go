@@ -1,9 +1,9 @@
 package connectors
 
 type Connector struct {
-	Id string
-	Name string
-	Properties []Property
+	Id string				`json:"id"`
+	Name string				`json:"name"`
+	Properties []Property	`json:"properties"`
 }
 
 type Property struct {

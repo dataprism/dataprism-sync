@@ -7,25 +7,36 @@ import (
 )
 
 type LinkManager struct {
-	consulStorage *consul.ConsulStorage
+	storage *consul.ConsulStorage
 }
 
 func NewManager(consulStorage *consul.ConsulStorage) *LinkManager {
-	return &LinkManager{consulStorage: consulStorage}
+	return &LinkManager{storage: consulStorage}
 }
 
-func (m *LinkManager) ListLinks(ctx context.Context) ([]string, error) {
-	return m.consulStorage.List(ctx, "links/")
+func (m *LinkManager) ListLinks(ctx context.Context) ([]*Link, error) {
+	var result []*Link
+
+	pairs, err := m.storage.List(ctx, "links/")
+	if err != nil { return nil, err }
+
+	for _, p := range pairs {
+		var entity Link
+		if err = json.Unmarshal(p.Value, &entity); err != nil { return nil, err }
+		result = append(result, &entity)
+	}
+
+	return result, err
 }
 
 func (m *LinkManager) GetLink(ctx context.Context, id string) (*Link, error) {
-	data, err := m.consulStorage.Get(ctx, "links/" + id)
+	data, err := m.storage.Get(ctx, "links/" + id)
 	if err != nil {
 		return nil, err
 	}
 
 	var res Link
-	err = json.Unmarshal(data, &res)
+	err = json.Unmarshal(data.Value, &res)
 	if err != nil {
 		return nil, err
 	}
@@ -39,11 +50,11 @@ func (m *LinkManager) SetLink(ctx context.Context, link *Link) (*Link, error) {
 		return nil, err
 	}
 
-	err = m.consulStorage.Set(ctx, "links/" + link.Id, data)
+	err = m.storage.Set(ctx, "links/" + link.Id, data)
 	if err != nil { return nil, err }
 	return link, nil
 }
 
 func (m *LinkManager) RemoveLink(ctx context.Context, id string) (error) {
-	return m.consulStorage.Remove(ctx, "links/" + id)
+	return m.storage.Remove(ctx, "links/" + id)
 }
