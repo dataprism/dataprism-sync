@@ -1,4 +1,4 @@
-package connectors
+package core
 
 import (
 	"net/http"
@@ -12,7 +12,7 @@ type ConnectorRouter struct {
 	manager *ConnectorManager
 }
 
-func NewRouter(connectorManager *ConnectorManager) (*ConnectorRouter) {
+func NewConnectorRouter(connectorManager *ConnectorManager) (*ConnectorRouter) {
 	return &ConnectorRouter{manager:connectorManager}
 }
 

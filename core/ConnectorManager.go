@@ -1,4 +1,4 @@
-package connectors
+package core
 
 import (
 	"context"
@@ -10,7 +10,7 @@ type ConnectorManager struct {
 	storage *consul.ConsulStorage
 }
 
-func NewManager(consulStorage *consul.ConsulStorage) *ConnectorManager {
+func NewConnectorManager(consulStorage *consul.ConsulStorage) *ConnectorManager {
 	return &ConnectorManager{storage: consulStorage}
 }
 

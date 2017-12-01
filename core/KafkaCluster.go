@@ -1,4 +1,4 @@
-package cluster
+package core
 
 type KafkaCluster struct {
 	Servers []string				`json:"servers"`

@@ -1,20 +1,19 @@
-package scheduler
+package core
 
 import (
 	"context"
 	"github.com/dataprism/dataprism-commons/schedule"
-	"github.com/dataprism/dataprism-sync/links"
-	"github.com/dataprism/dataprism-sync/connectors"
 )
 
 type ExecutionManager struct {
-	linkManager *links.LinkManager
-	connectorManager *connectors.ConnectorManager
+	linkManager *LinkManager
+	connectorManager *ConnectorManager
 	scheduler *schedule.Scheduler
+	cluster *KafkaCluster
 }
 
-func NewManager(linkManager *links.LinkManager, connectorManager *connectors.ConnectorManager, scheduler *schedule.Scheduler) *ExecutionManager {
-	return &ExecutionManager{linkManager, connectorManager, scheduler}
+func NewExecutionManager(linkManager *LinkManager, connectorManager *ConnectorManager, scheduler *schedule.Scheduler, cluster *KafkaCluster) *ExecutionManager {
+	return &ExecutionManager{linkManager, connectorManager, scheduler, cluster}
 }
 
 func (m *ExecutionManager) Deploy(ctx context.Context, id string) (*schedule.ScheduleResponse, error) {
@@ -31,7 +30,7 @@ func (m *ExecutionManager) Deploy(ctx context.Context, id string) (*schedule.Sch
 	}
 
 	// -- create the job for the link
-	job := NewSyncJob(link, connector)
+	job := &SyncJob{link, connector, m.cluster}
 
 	// -- schedule the job
 	return m.scheduler.Schedule(job)

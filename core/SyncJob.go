@@ -1,9 +1,7 @@
-package scheduler
+package core
 
 import (
 	"github.com/hashicorp/nomad/api"
-	"github.com/dataprism/dataprism-sync/links"
-	"github.com/dataprism/dataprism-sync/connectors"
 	"github.com/dataprism/dataprism-commons/utils"
 	"strings"
 	"strconv"
@@ -12,18 +10,19 @@ import (
 )
 
 type SyncJob struct {
-	link *links.Link
-	connector *connectors.Connector
+	link *Link
+	connector *Connector
+	cluster *KafkaCluster
 }
 
-func NewSyncJob(link *links.Link, connector *connectors.Connector) *SyncJob {
-	return &SyncJob{link, connector}
+func NewSyncJob(link *Link, connector *Connector, cluster *KafkaCluster) SyncJob {
+	return SyncJob{link, connector, cluster}
 }
 
 func (s *SyncJob) ToJob() (*api.Job, error) {
 	nomadJobId := utils.ToNomadJobId("sync", s.link.Id)
 
-	vars, err := s.generateEnvVars()
+	vars, err := s.generateEnvVars(s.cluster)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +55,7 @@ func (s *SyncJob) ToJob() (*api.Job, error) {
 	return nomadJob, nil
 }
 
-func (s *SyncJob) generateEnvVars() (map[string]string, error) {
+func (s *SyncJob) generateEnvVars(cluster *KafkaCluster) (map[string]string, error) {
 
 	result := make(map[string]string)
 
@@ -71,9 +70,9 @@ func (s *SyncJob) generateEnvVars() (map[string]string, error) {
 		}
 
 		result["output.type"] = "kafka"
-		result["output.kafka.bootstrap_servers"] = strings.Join(s.link.KafkaCluster.Servers, ",")
-		result["output.kafka.min.messages"] = strconv.Itoa(s.link.KafkaCluster.KafkaBufferMinMsg)
-		result["output.kafka.buffering.max.ms"] = strconv.Itoa(s.link.KafkaCluster.KafkaBufferMaxMs)
+		result["output.kafka.bootstrap_servers"] = strings.Join(cluster.Servers, ",")
+		result["output.kafka.min.messages"] = strconv.Itoa(cluster.KafkaBufferMinMsg)
+		result["output.kafka.buffering.max.ms"] = strconv.Itoa(cluster.KafkaBufferMaxMs)
 		result["output.kafka.data_topic"] = s.link.Topic
 
 	} else if s.link.Direction == "OUT" {
@@ -82,7 +81,7 @@ func (s *SyncJob) generateEnvVars() (map[string]string, error) {
 		}
 
 		result["input.type"] = "kafka"
-		result["input.kafka.bootstrap_servers"] = strings.Join(s.link.KafkaCluster.Servers, ",")
+		result["input.kafka.bootstrap_servers"] = strings.Join(cluster.Servers, ",")
 		result["input.kafka.topic"] = s.link.Topic
 		result["input.kafka.group_id"] = s.link.Id
 

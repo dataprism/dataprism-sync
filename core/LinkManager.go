@@ -1,12 +1,10 @@
-package links
+package core
 
 import (
 	"context"
 	"encoding/json"
 	"github.com/dataprism/dataprism-commons/consul"
-	"github.com/hashicorp/nomad/api"
 	"github.com/dataprism/dataprism-commons/schedule"
-	"github.com/dataprism/dataprism-sync/scheduler"
 )
 
 type LinkManager struct {
@@ -14,7 +12,7 @@ type LinkManager struct {
 	scheduler *schedule.Scheduler
 }
 
-func NewManager(consulStorage *consul.ConsulStorage, scheduler *schedule.Scheduler) *LinkManager {
+func NewLinkManager(consulStorage *consul.ConsulStorage, scheduler *schedule.Scheduler) *LinkManager {
 	return &LinkManager{storage: consulStorage, scheduler:scheduler}
 }
 

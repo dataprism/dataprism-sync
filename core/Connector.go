@@ -1,4 +1,4 @@
-package connectors
+package core
 
 type Connector struct {
 	Id string				`json:"id"`

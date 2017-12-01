@@ -1,18 +1,16 @@
-package scheduler
+package core
 
 import (
 	"net/http"
 	"github.com/gorilla/mux"
 	"github.com/dataprism/dataprism-commons/utils"
-	"io/ioutil"
-	"encoding/json"
 )
 
 type ExectutionRouter struct {
 	manager *ExecutionManager
 }
 
-func NewRouter(manager *ExecutionManager) (*ExectutionRouter) {
+func NewExecutionRouter(manager *ExecutionManager) (*ExectutionRouter) {
 	return &ExectutionRouter{manager}
 }
 

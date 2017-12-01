@@ -1,4 +1,4 @@
-package links
+package core
 
 import (
 	"net/http"
@@ -12,7 +12,7 @@ type LinkRouter struct {
 	manager *LinkManager
 }
 
-func NewRouter(linkManager *LinkManager) (*LinkRouter) {
+func NewLinkRouter(linkManager *LinkManager) (*LinkRouter) {
 	return &LinkRouter{manager:linkManager}
 }
 
