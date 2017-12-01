@@ -16,7 +16,7 @@ import (
 
 func main() {
 	var jobsDir = flag.String("d", "/tmp", "the directory where job information will be stored")
-	var port = flag.Int("p", 6400, "the port of the dataprism logics rest api")
+	var port = flag.Int("p", 6400, "the port of the dataprism sync rest api")
 
 	API := api.CreateAPI("0.0.0.0:" + strconv.Itoa(*port))
 
