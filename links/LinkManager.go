@@ -4,14 +4,18 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/dataprism/dataprism-commons/consul"
+	"github.com/hashicorp/nomad/api"
+	"github.com/dataprism/dataprism-commons/schedule"
+	"github.com/dataprism/dataprism-sync/scheduler"
 )
 
 type LinkManager struct {
 	storage *consul.ConsulStorage
+	scheduler *schedule.Scheduler
 }
 
-func NewManager(consulStorage *consul.ConsulStorage) *LinkManager {
-	return &LinkManager{storage: consulStorage}
+func NewManager(consulStorage *consul.ConsulStorage, scheduler *schedule.Scheduler) *LinkManager {
+	return &LinkManager{storage: consulStorage, scheduler:scheduler}
 }
 
 func (m *LinkManager) ListLinks(ctx context.Context) ([]*Link, error) {
