@@ -35,6 +35,10 @@ func (m *ConnectorManager) GetConnector(ctx context.Context, id string) (*Connec
 		return nil, err
 	}
 
+	if data == nil {
+		return nil, nil
+	}
+
 	var res Connector
 	err = json.Unmarshal(data.Value, &res)
 	if err != nil {

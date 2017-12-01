@@ -66,7 +66,7 @@ func (s *SyncJob) generateEnvVars(cluster *KafkaCluster) (map[string]string, err
 
 		result["input.type"] = s.connector.Type
 		for k, v := range s.link.Settings {
-			result["input." + k] = v
+			result["input." + s.connector.Type + "." + k] = v
 		}
 
 		result["output.type"] = "kafka"
@@ -87,7 +87,7 @@ func (s *SyncJob) generateEnvVars(cluster *KafkaCluster) (map[string]string, err
 
 		result["output.type"] = s.connector.Type
 		for k, v := range s.link.Settings {
-			result["output." + k] = v
+			result["output." + s.connector.Type + "." + k] = v
 		}
 
 	} else {

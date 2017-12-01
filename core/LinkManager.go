@@ -37,6 +37,10 @@ func (m *LinkManager) GetLink(ctx context.Context, id string) (*Link, error) {
 		return nil, err
 	}
 
+	if data == nil {
+		return nil, nil
+	}
+
 	var res Link
 	err = json.Unmarshal(data.Value, &res)
 	if err != nil {
