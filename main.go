@@ -17,9 +17,11 @@ func main() {
 	var jobsDir = flag.String("d", "/tmp", "the directory where job information will be stored")
 	var port = flag.Int("p", 6400, "the port of the dataprism sync rest api")
 
-	var kafkaServers = flag.String("kafka-servers", "localhost:9092", "the kafka cluster nodes")
+	var kafkaServers = flag.String("kafka", "localhost:9092", "the kafka cluster nodes")
 	var kafkaBufferMaxMs = flag.Int("kafka-buffer-max-ms", 1000, "the max amount of time to buffer events before sending them to kafka")
 	var kafkaBufferMinMsg = flag.Int("kafka-buffer-min-msg", 1000, "the min amount of messages to buffer events before sending them to kafka")
+
+	flag.Parse()
 
 	cluster := &core.KafkaCluster{strings.Split(*kafkaServers, ","), *kafkaBufferMaxMs, *kafkaBufferMinMsg}
 
@@ -59,6 +61,7 @@ func main() {
 	executionManager := core.NewExecutionManager(linkManager, connectorManager, s, cluster)
 	executionRouter := core.NewExecutionRouter(executionManager)
 	API.RegisterPost("/v1/links/{id}/run", executionRouter.Deploy)
+	API.RegisterDelete("/v1/links/{id}/run", executionRouter.Undeploy)
 
 	err = API.Start()
 	if err != nil {

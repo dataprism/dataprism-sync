@@ -35,3 +35,8 @@ func (m *ExecutionManager) Deploy(ctx context.Context, id string) (*schedule.Sch
 	// -- schedule the job
 	return m.scheduler.Schedule(job)
 }
+
+func (m *ExecutionManager) Undeploy(ctx context.Context, id string) (*schedule.UnscheduleResponse, error) {
+	// -- schedule the job
+	return m.scheduler.Unschedule("sync", id)
+}

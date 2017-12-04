@@ -21,3 +21,11 @@ func (router *ExectutionRouter) Deploy(w http.ResponseWriter, r *http.Request) {
 	resp, err := router.manager.Deploy(r.Context(), id)
 	utils.HandleResponse(w, resp, err)
 }
+
+func (router *ExectutionRouter) Undeploy(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := vars["id"]
+
+	resp, err := router.manager.Undeploy(r.Context(), id)
+	utils.HandleResponse(w, resp, err)
+}

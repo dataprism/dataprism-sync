@@ -7,12 +7,21 @@ import (
 	"strconv"
 	"errors"
 	"encoding/json"
+	"github.com/hashicorp/nomad/helper"
 )
 
 type SyncJob struct {
 	link *Link
 	connector *Connector
 	cluster *KafkaCluster
+}
+
+func DefaultSyncJobResources() *api.Resources {
+	return &api.Resources{
+		CPU:      helper.IntToPtr(1500),
+		MemoryMB: helper.IntToPtr(512),
+		IOPS:     helper.IntToPtr(0),
+	}
 }
 
 func NewSyncJob(link *Link, connector *Connector, cluster *KafkaCluster) SyncJob {
@@ -39,17 +48,19 @@ func (s *SyncJob) ToJob() (*api.Job, error) {
 
 	task := api.NewTask(nomadJobId, "docker")
 
-	//task.Config = make(map[string]interface{})
-	task.Config["image"] = "vrtoeni/to-kafka:latest"
+	task.Config = make(map[string]interface{})
+	task.Config["image"] = "dataprism/dataprism-sync-runtime:latest"
 	task.Env = vars
+	task.Meta = make(map[string]string)
 	task.Meta["link"] = string(strLink)
 	task.Meta["connector"] = string(strConnector)
+	task.Resources = DefaultSyncJobResources()
 
 	taskGroup := api.NewTaskGroup("syncs", 1)
 	taskGroup.Tasks = []*api.Task{task}
 
 	nomadJob := api.NewServiceJob(nomadJobId, strings.ToTitle(s.link.Name), "global", 1)
-	nomadJob.Datacenters = []string{ "dc1" }
+	nomadJob.Datacenters = []string{ "aws" }
 	nomadJob.TaskGroups = []*api.TaskGroup{taskGroup}
 
 	return nomadJob, nil
