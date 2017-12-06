@@ -1,4 +1,4 @@
-package core
+package sync
 
 type Connector struct {
 	Id string				`json:"id"`

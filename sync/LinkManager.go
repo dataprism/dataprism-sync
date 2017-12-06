@@ -1,25 +1,23 @@
-package core
+package sync
 
 import (
 	"context"
 	"encoding/json"
-	"github.com/dataprism/dataprism-commons/consul"
-	"github.com/dataprism/dataprism-commons/schedule"
+	"github.com/dataprism/dataprism-commons/core"
 )
 
 type LinkManager struct {
-	storage *consul.ConsulStorage
-	scheduler *schedule.Scheduler
+	platform *core.Platform
 }
 
-func NewLinkManager(consulStorage *consul.ConsulStorage, scheduler *schedule.Scheduler) *LinkManager {
-	return &LinkManager{storage: consulStorage, scheduler:scheduler}
+func NewLinkManager(platform *core.Platform) *LinkManager {
+	return &LinkManager{platform}
 }
 
 func (m *LinkManager) ListLinks(ctx context.Context) ([]*Link, error) {
 	var result []*Link
 
-	pairs, err := m.storage.List(ctx, "links/")
+	pairs, err := m.platform.KV.List(ctx, "links/")
 	if err != nil { return nil, err }
 
 	for _, p := range pairs {
@@ -32,7 +30,7 @@ func (m *LinkManager) ListLinks(ctx context.Context) ([]*Link, error) {
 }
 
 func (m *LinkManager) GetLink(ctx context.Context, id string) (*Link, error) {
-	data, err := m.storage.Get(ctx, "links/" + id)
+	data, err := m.platform.KV.Get(ctx, "links/" + id)
 	if err != nil {
 		return nil, err
 	}
@@ -56,11 +54,11 @@ func (m *LinkManager) SetLink(ctx context.Context, link *Link) (*Link, error) {
 		return nil, err
 	}
 
-	err = m.storage.Set(ctx, "links/" + link.Id, data)
+	err = m.platform.KV.Set(ctx, "links/" + link.Id, data)
 	if err != nil { return nil, err }
 	return link, nil
 }
 
 func (m *LinkManager) RemoveLink(ctx context.Context, id string) (error) {
-	return m.storage.Remove(ctx, "links/" + id)
+	return m.platform.KV.Remove(ctx, "links/" + id)
 }

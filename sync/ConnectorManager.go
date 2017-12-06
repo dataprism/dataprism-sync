@@ -1,23 +1,23 @@
-package core
+package sync
 
 import (
 	"context"
 	"encoding/json"
-	"github.com/dataprism/dataprism-commons/consul"
+	"github.com/dataprism/dataprism-commons/core"
 )
 
 type ConnectorManager struct {
-	storage *consul.ConsulStorage
+	platform *core.Platform
 }
 
-func NewConnectorManager(consulStorage *consul.ConsulStorage) *ConnectorManager {
-	return &ConnectorManager{storage: consulStorage}
+func NewConnectorManager(platform *core.Platform) *ConnectorManager {
+	return &ConnectorManager{platform}
 }
 
 func (m *ConnectorManager) ListConnectors(ctx context.Context) ([]*Connector, error) {
 	var result []*Connector
 
-	pairs, err := m.storage.List(ctx, "connectors/")
+	pairs, err := m.platform.KV.List(ctx, "connectors/")
 	if err != nil { return nil, err }
 
 	for _, p := range pairs {
@@ -30,7 +30,7 @@ func (m *ConnectorManager) ListConnectors(ctx context.Context) ([]*Connector, er
 }
 
 func (m *ConnectorManager) GetConnector(ctx context.Context, id string) (*Connector, error) {
-	data, err := m.storage.Get(ctx, "connectors/" + id)
+	data, err := m.platform.KV.Get(ctx, "connectors/" + id)
 	if err != nil {
 		return nil, err
 	}
@@ -54,11 +54,11 @@ func (m *ConnectorManager) SetConnector(ctx context.Context, connector *Connecto
 		return nil, err
 	}
 
-	err = m.storage.Set(ctx, "connectors/" + connector.Id, data)
+	err = m.platform.KV.Set(ctx, "connectors/" + connector.Id, data)
 	if err != nil { return nil, err }
 	return connector, nil
 }
 
 func (m *ConnectorManager) RemoveConnector(ctx context.Context, id string) (error) {
-	return m.storage.Remove(ctx, "connectors/" + id)
+	return m.platform.KV.Remove(ctx, "connectors/" + id)
 }

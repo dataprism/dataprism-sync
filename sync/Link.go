@@ -1,4 +1,4 @@
-package core
+package sync
 
 type Link struct {
 	Id string						`json:"id"`

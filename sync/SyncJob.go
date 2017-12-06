@@ -1,4 +1,4 @@
-package core
+package sync
 
 import (
 	"github.com/hashicorp/nomad/api"
@@ -8,12 +8,13 @@ import (
 	"errors"
 	"encoding/json"
 	"github.com/hashicorp/nomad/helper"
+	"github.com/dataprism/dataprism-commons/config"
 )
 
 type SyncJob struct {
 	link *Link
 	connector *Connector
-	cluster *KafkaCluster
+	cluster *config.KafkaCluster
 }
 
 func DefaultSyncJobResources() *api.Resources {
@@ -24,7 +25,7 @@ func DefaultSyncJobResources() *api.Resources {
 	}
 }
 
-func NewSyncJob(link *Link, connector *Connector, cluster *KafkaCluster) SyncJob {
+func NewSyncJob(link *Link, connector *Connector, cluster *config.KafkaCluster) SyncJob {
 	return SyncJob{link, connector, cluster}
 }
 
@@ -66,7 +67,7 @@ func (s *SyncJob) ToJob() (*api.Job, error) {
 	return nomadJob, nil
 }
 
-func (s *SyncJob) generateEnvVars(cluster *KafkaCluster) (map[string]string, error) {
+func (s *SyncJob) generateEnvVars(cluster *config.KafkaCluster) (map[string]string, error) {
 
 	result := make(map[string]string)
 
