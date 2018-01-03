@@ -1,12 +1,15 @@
 package sync
 
 import (
-	"github.com/dataprism/dataprism-commons/api"
 	"github.com/dataprism/dataprism-commons/core"
+	"github.com/dataprism/dataprism-commons/api"
 )
 
-func CreateRoutes(platform *core.Platform, API *api.Rest) {
+type DataprismPlugin struct {}
 
+func (d *DataprismPlugin) Id() string { return "sync" }
+
+func (d *DataprismPlugin) CreateRoutes(platform *core.Platform, API *api.Rest) {
 	// -- Connectors
 	connectorManager := NewConnectorManager(platform)
 	connectorRouter := NewConnectorRouter(connectorManager)
